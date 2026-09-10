@@ -1,6 +1,6 @@
 # SPARK (Student Project Acceleration & Resource Kit)
 
-![Status: In Progress](https://img.shields.io/badge/Status-In%20Progress-blue)![Stack: SharePoint + Power Automate](https://img.shields.io/badge/Stack-SharePoint%20%2B%20Power%20Automate-brightgreen)
+![Status: In Progress](https://img.shields.io/badge/Status-In%20Progress-blue) ![Stack: SharePoint + Power Automate](https://img.shields.io/badge/Stack-SharePoint%20%2B%20Power%20Automate-brightgreen)
 
 ## Project Overview
 SPARK is a centralized, zero-code internal portal designed to match Visteon Freshers and Risers with hands-on technical opportunities offered by Mentors and Managers. Built entirely on SharePoint and M365 (Power Automate), SPARK fosters internal mobility, skill development, and cross-functional collaboration.
