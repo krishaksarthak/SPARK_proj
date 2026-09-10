@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rewards & Hall of Fame - SPARK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #005BAB;
+            --secondary: #1A1A2E;
+            --bg-color: #F5F7FA;
+            --card-bg: #FFFFFF;
+            --text-dark: #333333;
+            --text-light: #666666;
+            --border-color: #E2E8F0;
+            --gold-light: #FFD700;
+            --gold-dark: #B8860B;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-dark); line-height: 1.6; }
+
+        /* Top Nav */
+        header.main-header { background-color: var(--secondary); color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
+        .logo-container { display: flex; align-items: center; gap: 10px; }
+        .logo-container h1 { font-size: 1.5rem; font-weight: 700; color: #fff; }
+        .logo-container span { font-size: 0.9rem; color: #aaa; }
+        nav { display: flex; gap: 1.5rem; }
+        nav a { color: #CBD5E1; text-decoration: none; font-weight: 500; transition: color 0.3s; }
+        nav a:hover, nav a.active { color: white; border-bottom: 2px solid var(--primary); }
+        .user-profile { display: flex; align-items: center; gap: 10px; }
+        .avatar { width: 35px; height: 35px; border-radius: 50%; background-color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.9rem; }
+
+        /* Hero Section */
+        .hero { background: linear-gradient(135deg, var(--secondary), #2A2A4A); color: white; padding: 4rem 2rem; text-align: center; position: relative; overflow: hidden; }
+        .hero::after { content: "🏆"; position: absolute; font-size: 15rem; opacity: 0.05; right: -5%; top: -20%; transform: rotate(15deg); }
+        .hero-content { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; }
+        .hero h2 { font-size: 3rem; font-weight: 800; margin-bottom: 1rem; background: linear-gradient(to right, #FFF, var(--gold-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero p { font-size: 1.2rem; color: #CBD5E1; }
+
+        main { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+
+        /* Filter Bar */
+        .filter-bar { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+        .filter-group { display: flex; align-items: center; gap: 1rem; }
+        .filter-group label { font-weight: 600; color: var(--secondary); font-size: 0.95rem; }
+        .filter-group select { padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 6px; background-color: white; font-size: 0.95rem; cursor: pointer; outline: none; }
+        
+        /* Grid */
+        .rewards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 2rem; }
+
+        /* Winner Card */
+        .winner-card { background: var(--card-bg); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.3s, box-shadow 0.3s; position: relative; border: 1px solid var(--border-color); }
+        .winner-card:hover { transform: translateY(-5px); box-shadow: 0 12px 20px rgba(0,0,0,0.1); }
+        
+        .card-header { height: 100px; background: linear-gradient(135deg, #1A1A2E, #2A2A4A); position: relative; }
+        .card-header.gold { background: linear-gradient(135deg, var(--gold-dark), var(--gold-light)); }
+        
+        .winner-photo { width: 80px; height: 80px; border-radius: 50%; border: 4px solid var(--card-bg); position: absolute; bottom: -40px; left: 20px; background: var(--primary); display: flex; justify-content: center; align-items: center; color: white; font-size: 1.8rem; font-weight: 700; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .photo-1 { background: #3B82F6; } .photo-2 { background: #10B981; } .photo-3 { background: #F59E0B; } .photo-4 { background: #8B5CF6; } .photo-5 { background: #EC4899; } .photo-6 { background: #06B6D4; }
+
+        .month-badge { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.2); backdrop-filter: blur(4px); color: white; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.4); }
+        .card-header.gold .month-badge { background: rgba(0,0,0,0.2); color: #222; border: 1px solid rgba(0,0,0,0.1); }
+
+        .card-body { padding: 3rem 1.5rem 1.5rem 1.5rem; display: flex; flex-direction: column; height: calc(100% - 100px); }
+        .winner-name { font-size: 1.25rem; font-weight: 700; color: var(--secondary); margin-bottom: 0.25rem; }
+        .winner-role { font-size: 0.85rem; color: var(--text-light); margin-bottom: 1rem; }
+        
+        .award-badge { display: inline-flex; align-items: center; gap: 0.4rem; background: #FEF3C7; color: #92400E; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; margin-bottom: 1rem; align-self: flex-start; }
+        
+        .story-excerpt { font-size: 0.9rem; color: var(--text-dark); line-height: 1.5; margin-bottom: 1.5rem; flex: 1; font-style: italic; border-left: 3px solid var(--border-color); padding-left: 1rem; }
+        
+        .project-link { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 600; color: var(--primary); text-decoration: none; padding-top: 1rem; border-top: 1px solid var(--border-color); transition: color 0.2s; }
+        .project-link:hover { color: var(--secondary); }
+
+        /* Footer CTA */
+        .cta-section { margin-top: 4rem; text-align: center; padding: 3rem 2rem; background: var(--card-bg); border-radius: 12px; border: 1px dashed var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .cta-section h3 { font-size: 1.5rem; color: var(--secondary); margin-bottom: 0.5rem; }
+        .cta-section p { color: var(--text-light); margin-bottom: 1.5rem; }
+        .btn-nominate { display: inline-block; background: var(--primary); color: white; padding: 0.75rem 2rem; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 1rem; transition: background 0.2s, transform 0.2s; }
+        .btn-nominate:hover { background: #004280; transform: translateY(-2px); }
+
+        @media (max-width: 768px) {
+            header.main-header { flex-direction: column; gap: 1rem; padding: 1rem; }
+            .hero h2 { font-size: 2rem; }
+            .filter-bar { flex-direction: column; align-items: stretch; }
+            .filter-group { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="logo-container">
+            <h1>SPARK</h1>
+            <span>| Visteon Internal Portal</span>
+        </div>
+        <nav>
+            <a href="Home.html">Home</a>
+            <a href="Explore.aspx.html">Explore</a>
+            <a href="Manager-Hub.html">Manager Hub</a>
+            <a href="Rewards.html" class="active">Rewards</a>
+        </nav>
+        <div class="user-profile">
+            <div class="avatar">JD</div>
+            <span style="font-size: 0.9rem;">John Doe</span>
+        </div>
+    </header>
+
+    <div class="hero">
+        <div class="hero-content">
+            <h2>Hall of Fame</h2>
+            <p>Celebrating Visteon Talent 🏆 Excellence in Innovation & Collaboration</p>
+        </div>
+    </div>
+
+    <main>
+        <div class="filter-bar">
+            <div class="filter-group">
+                <label for="awardType">Award Type:</label>
+                <select id="awardType">
+                    <option value="All">All Awards</option>
+                    <option value="Rising Star">Rising Star</option>
+                    <option value="Innovation Champion">Innovation Champion</option>
+                    <option value="Best Collaborator">Best Collaborator</option>
+                    <option value="Performer of Month">Performer of Month</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="year">Year:</label>
+                <select id="year">
+                    <option value="2026">2026</option>
+                    <option value="2025">2025</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="rewards-grid">
+            
+            <!-- Card 1 -->
+            <div class="winner-card">
+                <div class="card-header gold">
+                    <span class="month-badge">Aug 2026</span>
+                    <div class="winner-photo photo-1">AS</div>
+                </div>
+                <div class="card-body">
+                    <h3 class="winner-name">Arjun Sharma</h3>
+                    <div class="winner-role">Data Scientist | AI Center of Excellence</div>
+                    <div class="award-badge">⭐ Rising Star</div>
+                    <div class="story-excerpt">
+                        "Arjun delivered exceptional results on the ML models ahead of schedule, showing incredible fast-learning capabilities in a new domain."
+                    </div>
+                    <a href="#" class="project-link">🔗 Predictive Maintenance ML Model</a>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="winner-card">
+                <div class="card-header">
+                    <span class="month-badge">Jul 2026</span>
+                    <div class="winner-photo photo-2">PN</div>
+                </div>
+                <div class="card-body">
+                    <h3 class="winner-name">Priya Nair</h3>
+                    <div class="winner-role">Senior Developer | ADAS Systems</div>
+                    <div class="award-badge">💡 Innovation Champion</div>
+                    <div class="story-excerpt">
+                        "Priya architected a novel defect classification pipeline that improved accuracy by 15%, setting a new benchmark for internal tools."
+                    </div>
+                    <a href="#" class="project-link">🔗 AI Defect Classifier</a>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="winner-card">
+                <div class="card-header">
+                    <span class="month-badge">Aug 2026</span>
+                    <div class="winner-photo photo-3">RM</div>
+                </div>
+                <div class="card-body">
+                    <h3 class="winner-name">Rahul Mehta</h3>
+                    <div class="winner-role">Embedded Engineer | Hardware Team</div>
+                    <div class="award-badge">🤝 Best Collaborator</div>
+                    <div class="story-excerpt">
+                        "Rahul consistently bridged the gap between the .NET software team and hardware testers, ensuring smooth integration sprints."
+                    </div>
+                    <a href="#" class="project-link">🔗 CAN Bus Data Logger</a>
+                </div>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="winner-card">
+                <div class="card-header gold">
+                    <span class="month-badge">Jun 2026</span>
+                    <div class="winner-photo photo-4">SP</div>
+                </div>
+                <div class="card-body">
+                    <h3 class="winner-name">Sneha Patel</h3>
+                    <div class="winner-role">BI Analyst | Analytics Team</div>
+                    <div class="award-badge">⭐ Rising Star</div>
+                    <div class="story-excerpt">
+                        "Brought fresh perspectives to visualization, completely transforming how stakeholders view EV performance metrics."
+                    </div>
+                    <a href="#" class="project-link">🔗 EV Dashboard POC</a>
+                </div>
+            </div>
+
+            <!-- Card 5 -->
+            <div class="winner-card">
+                <div class="card-header">
+                    <span class="month-badge">Jul 2026</span>
+                    <div class="winner-photo photo-5">KR</div>
+                </div>
+                <div class="card-body">
+                    <h3 class="winner-name">Kiran Reddy</h3>
+                    <div class="winner-role">Cloud Architect | IT Infrastructure</div>
+                    <div class="award-badge">🏅 Performer of Month</div>
+                    <div class="story-excerpt">
+                        "Successfully unblocked 3 major project teams by streamlining the SharePoint data migration flow."
+                    </div>
+                    <a href="#" class="project-link">🔗 SharePoint Migration</a>
+                </div>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="winner-card">
+                <div class="card-header">
+                    <span class="month-badge">Aug 2026</span>
+                    <div class="winner-photo photo-6">AS</div>
+                </div>
+                <div class="card-body">
+                    <h3 class="winner-name">Ananya Singh</h3>
+                    <div class="winner-role">UX Designer | Product Design</div>
+                    <div class="award-badge">💡 Innovation Champion</div>
+                    <div class="story-excerpt">
+                        "Redefined the testing interface for embedded HMIs, making it significantly more intuitive for non-technical users."
+                    </div>
+                    <a href="#" class="project-link">🔗 Embedded HMI</a>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="cta-section">
+            <h3>Know someone who went above and beyond?</h3>
+            <p>Help us recognize talent across Visteon by submitting a nomination for next month's awards.</p>
+            <a href="#" class="btn-nominate" onclick="alert('Opening Spotlight_Winners form...')">Nominate a Colleague</a>
+        </div>
+    </main>
+
+</body>
+</html>

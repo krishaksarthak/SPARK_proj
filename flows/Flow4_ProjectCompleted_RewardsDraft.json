@@ -1,0 +1,92 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+      "Send_Nomination_Email": {
+        "inputs": {
+          "host": {
+            "connectionName": "shared_office365",
+            "operationId": "SendEmailV2",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365"
+          },
+          "parameters": {
+            "To": "@triggerOutputs()?['body/MentorName/Email']",
+            "Subject": "[SPARK] Action Required: Nominate Winners for @{triggerOutputs()?['body/Title']}",
+            "Body": "<p>Hello,</p><p>Please nominate winners for the completed project <strong>@{triggerOutputs()?['body/Title']}</strong>.</p><p><a href='https://visteon.sharepoint.com/sites/SPARK/Lists/Spotlight_Winners/NewForm.aspx'>Click here to submit nominations</a></p>"
+          }
+        },
+        "runAfter": {},
+        "type": "OpenApiConnection"
+      },
+      "Create_Spotlight_Winner_Draft": {
+        "inputs": {
+          "host": {
+            "connectionName": "shared_sharepointonline",
+            "operationId": "PostItem",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+          },
+          "parameters": {
+            "dataset": "https://visteon.sharepoint.com/sites/SPARK",
+            "table": "Spotlight_Winners",
+            "item/Title": "Pending Nomination for @{triggerOutputs()?['body/Title']}",
+            "item/Award": "Rising Star"
+          }
+        },
+        "runAfter": {
+          "Send_Nomination_Email": [
+            "Succeeded"
+          ]
+        },
+        "type": "OpenApiConnection"
+      },
+      "Error_Handling_Scope": {
+        "actions": {
+          "Send_Error_Email": {
+            "inputs": {
+              "host": {
+                "connectionName": "shared_office365",
+                "operationId": "SendEmailV2",
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365"
+              },
+              "parameters": {
+                "To": "admin@visteon.com",
+                "Subject": "Flow Failure: Project Completed Notify",
+                "Body": "An error occurred in the flow processing Opportunity ID: @{triggerOutputs()?['body/ID']}"
+              }
+            },
+            "runAfter": {},
+            "type": "OpenApiConnection"
+          }
+        },
+        "runAfter": {
+          "Create_Spotlight_Winner_Draft": [
+            "Failed",
+            "TimedOut"
+          ]
+        },
+        "type": "Scope"
+      }
+    },
+    "triggers": {
+      "When_an_item_is_modified": {
+        "inputs": {
+          "host": {
+            "connectionName": "shared_sharepointonline",
+            "operationId": "GetOnUpdatedItems",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+          },
+          "parameters": {
+            "dataset": "https://visteon.sharepoint.com/sites/SPARK",
+            "table": "Opportunities"
+          }
+        },
+        "conditions": [
+          {
+            "expression": "@equals(triggerOutputs()?['body/Status/Value'], 'Completed')"
+          }
+        ],
+        "type": "OpenApiConnection"
+      }
+    }
+  }
+}

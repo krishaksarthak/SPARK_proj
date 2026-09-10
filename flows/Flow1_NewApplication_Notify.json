@@ -1,0 +1,223 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+      "Initialize_variable_SiteUrl": {
+        "inputs": {
+          "variables": [
+            {
+              "name": "SiteUrl",
+              "type": "string",
+              "value": "https://visteon.sharepoint.com/sites/SPARK"
+            }
+          ]
+        },
+        "runAfter": {},
+        "type": "InitializeVariable",
+        "description": "Initialize SiteUrl variable"
+      },
+      "Get_Opportunity_Item": {
+        "inputs": {
+          "host": {
+            "connectionName": "shared_sharepointonline",
+            "operationId": "GetItem",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+          },
+          "parameters": {
+            "dataset": "@variables('SiteUrl')",
+            "table": "Opportunities",
+            "id": "@triggerOutputs()?['body/OpportunityId/Id']"
+          }
+        },
+        "runAfter": {
+          "Initialize_variable_SiteUrl": [
+            "Succeeded"
+          ]
+        },
+        "type": "OpenApiConnection",
+        "description": "Get Opportunity details"
+      },
+      "Get_Mentor_Profile": {
+        "inputs": {
+          "host": {
+            "connectionName": "shared_office365users",
+            "operationId": "UserProfileV2",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365users"
+          },
+          "parameters": {
+            "id": "@outputs('Get_Opportunity_Item')?['body/MentorName/Email']"
+          }
+        },
+        "runAfter": {
+          "Get_Opportunity_Item": [
+            "Succeeded"
+          ]
+        },
+        "type": "OpenApiConnection",
+        "description": "Get Mentor User Profile"
+      },
+      "Get_Manager_Profile": {
+        "inputs": {
+          "host": {
+            "connectionName": "shared_office365users",
+            "operationId": "UserProfileV2",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365users"
+          },
+          "parameters": {
+            "id": "@outputs('Get_Opportunity_Item')?['body/Manager/Email']"
+          }
+        },
+        "runAfter": {
+          "Get_Mentor_Profile": [
+            "Succeeded"
+          ]
+        },
+        "type": "OpenApiConnection",
+        "description": "Get Manager User Profile"
+      },
+      "Send_Email_Mentor": {
+        "inputs": {
+          "host": {
+            "connectionName": "shared_office365",
+            "operationId": "SendEmailV2",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365"
+          },
+          "parameters": {
+            "To": "@outputs('Get_Mentor_Profile')?['body/mail']",
+            "Subject": "[SPARK] New Application: @{outputs('Get_Opportunity_Item')?['body/Title']} - @{triggerOutputs()?['body/ApplicantDisplayName']}",
+            "Body": "<html><body><p>Hello @{outputs('Get_Mentor_Profile')?['body/givenName']},</p><p>A new application has been submitted for <strong>@{outputs('Get_Opportunity_Item')?['body/Title']}</strong> by @{triggerOutputs()?['body/ApplicantDisplayName']}.</p><p><strong>Skills:</strong> @{triggerOutputs()?['body/Skills']}<br/><strong>Interest Statement:</strong> @{substring(triggerOutputs()?['body/InterestStatement'], 0, min(300, length(triggerOutputs()?['body/InterestStatement'])))}...<br/><strong>Availability:</strong> @{triggerOutputs()?['body/Availability']}</p><p><a href=\"@{variables('SiteUrl')}/SitePages/ManagerHub.aspx\">Click here to view in Manager Hub</a></p></body></html>"
+          }
+        },
+        "runAfter": {
+          "Get_Manager_Profile": [
+            "Succeeded"
+          ]
+        },
+        "type": "OpenApiConnection",
+        "description": "Send Email to Mentor"
+      },
+      "Send_Email_Manager": {
+        "inputs": {
+          "host": {
+            "connectionName": "shared_office365",
+            "operationId": "SendEmailV2",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365"
+          },
+          "parameters": {
+            "To": "@outputs('Get_Manager_Profile')?['body/mail']",
+            "Subject": "[SPARK] New Application: @{outputs('Get_Opportunity_Item')?['body/Title']} - @{triggerOutputs()?['body/ApplicantDisplayName']}",
+            "Body": "<html><body><p>Hello @{outputs('Get_Manager_Profile')?['body/givenName']},</p><p>A new application has been submitted for <strong>@{outputs('Get_Opportunity_Item')?['body/Title']}</strong> by @{triggerOutputs()?['body/ApplicantDisplayName']}.</p><p><strong>Skills:</strong> @{triggerOutputs()?['body/Skills']}<br/><strong>Interest Statement:</strong> @{substring(triggerOutputs()?['body/InterestStatement'], 0, min(300, length(triggerOutputs()?['body/InterestStatement'])))}...<br/><strong>Availability:</strong> @{triggerOutputs()?['body/Availability']}</p><p><a href=\"@{variables('SiteUrl')}/SitePages/ManagerHub.aspx\">Click here to view in Manager Hub</a></p></body></html>"
+          }
+        },
+        "runAfter": {
+          "Send_Email_Mentor": [
+            "Succeeded"
+          ]
+        },
+        "type": "OpenApiConnection",
+        "description": "Send Email to Manager"
+      },
+      "Update_Application_Title": {
+        "inputs": {
+          "host": {
+            "connectionName": "shared_sharepointonline",
+            "operationId": "PatchItem",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+          },
+          "parameters": {
+            "dataset": "@variables('SiteUrl')",
+            "table": "Applications",
+            "id": "@triggerOutputs()?['body/ID']",
+            "item/Title": "@{outputs('Get_Opportunity_Item')?['body/Title']} - @{triggerOutputs()?['body/ApplicantDisplayName']}"
+          }
+        },
+        "runAfter": {
+          "Send_Email_Manager": [
+            "Succeeded"
+          ]
+        },
+        "type": "OpenApiConnection",
+        "description": "Update Applications item Title"
+      },
+      "Condition_Teams_Channel": {
+        "actions": {
+          "Post_Adaptive_Card_Teams": {
+            "inputs": {
+              "host": {
+                "connectionName": "shared_teams",
+                "operationId": "PostCardToConversation",
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_teams"
+              },
+              "parameters": {
+                "poster": "Flow bot",
+                "location": "Channel",
+                "body/recipient/groupId": "YOUR_GROUP_ID",
+                "body/recipient/channelId": "YOUR_CHANNEL_ID",
+                "body/messageBody": "{\n  \"type\": \"AdaptiveCard\",\n  \"version\": \"1.4\",\n  \"body\": [\n    {\n      \"type\": \"TextBlock\",\n      \"text\": \"New Application Submitted!\",\n      \"weight\": \"Bolder\",\n      \"size\": \"Medium\"\n    },\n    {\n      \"type\": \"TextBlock\",\n      \"text\": \"@{triggerOutputs()?['body/ApplicantDisplayName']} applied for @{outputs('Get_Opportunity_Item')?['body/Title']}\",\n      \"wrap\": true\n    }\n  ]\n}"
+              }
+            },
+            "runAfter": {},
+            "type": "OpenApiConnection"
+          }
+        },
+        "expression": {
+          "equals": [
+            "@empty(outputs('Get_Opportunity_Item')?['body/TeamsChannelId'])",
+            false
+          ]
+        },
+        "runAfter": {
+          "Update_Application_Title": [
+            "Succeeded"
+          ]
+        },
+        "type": "If",
+        "description": "Check if Teams channel exists"
+      },
+      "Error_Handling_Scope": {
+        "actions": {
+          "Send_Error_Email": {
+            "inputs": {
+              "host": {
+                "connectionName": "shared_office365",
+                "operationId": "SendEmailV2",
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365"
+              },
+              "parameters": {
+                "To": "admin@visteon.com",
+                "Subject": "Flow Failure: New Application Notify",
+                "Body": "An error occurred in the flow processing Application ID: @{triggerOutputs()?['body/ID']}"
+              }
+            },
+            "runAfter": {},
+            "type": "OpenApiConnection"
+          }
+        },
+        "runAfter": {
+          "Condition_Teams_Channel": [
+            "Failed",
+            "TimedOut"
+          ]
+        },
+        "type": "Scope",
+        "description": "Error handling scope"
+      }
+    },
+    "triggers": {
+      "When_an_item_is_created": {
+        "inputs": {
+          "host": {
+            "connectionName": "shared_sharepointonline",
+            "operationId": "GetOnNewItems",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+          },
+          "parameters": {
+            "dataset": "https://visteon.sharepoint.com/sites/SPARK",
+            "table": "Applications"
+          }
+        },
+        "type": "OpenApiConnection"
+      }
+    }
+  }
+}

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager Hub - SPARK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #005BAB;
+            --secondary: #1A1A2E;
+            --bg-color: #F5F7FA;
+            --card-bg: #FFFFFF;
+            --text-dark: #333333;
+            --text-light: #666666;
+            --border-color: #E2E8F0;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --info: #3B82F6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-dark); line-height: 1.6; }
+
+        /* Top Nav */
+        header.main-header { background-color: var(--secondary); color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
+        .logo-container { display: flex; align-items: center; gap: 10px; }
+        .logo-container h1 { font-size: 1.5rem; font-weight: 700; color: #fff; }
+        .logo-container span { font-size: 0.9rem; color: #aaa; }
+        nav { display: flex; gap: 1.5rem; }
+        nav a { color: #CBD5E1; text-decoration: none; font-weight: 500; transition: color 0.3s; }
+        nav a:hover, nav a.active { color: white; border-bottom: 2px solid var(--primary); }
+        .user-profile { display: flex; align-items: center; gap: 10px; }
+        .avatar { width: 35px; height: 35px; border-radius: 50%; background-color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.9rem; }
+
+        /* Page Header */
+        .page-header { background-color: var(--card-bg); padding: 2rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .welcome-section { display: flex; align-items: center; gap: 1.5rem; }
+        .welcome-avatar { width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), #00B4D8); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: 700; }
+        .welcome-text h2 { font-size: 1.8rem; color: var(--secondary); }
+        .welcome-text p { color: var(--text-light); }
+        .restriction-badge { background-color: rgba(239, 68, 68, 0.1); color: var(--danger); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; border: 1px solid rgba(239, 68, 68, 0.2); }
+
+        main { max-width: 1400px; margin: 0 auto; padding: 2rem; display: flex; flex-direction: column; gap: 2.5rem; }
+
+        .section-title { font-size: 1.4rem; font-weight: 700; color: var(--secondary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+
+        /* Section A: My Opportunities */
+        .opp-table-container { background: var(--card-bg); border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--border-color); }
+        th { background-color: #F8FAFC; font-weight: 600; color: var(--text-light); font-size: 0.85rem; text-transform: uppercase; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover { background-color: #F8FAFC; }
+        .inline-edit { display: flex; gap: 0.5rem; align-items: center; }
+        select.status-select { padding: 0.4rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 0.9rem; }
+        .btn-save { background-color: var(--primary); color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: 500; transition: background 0.2s; }
+        .btn-save:hover { background-color: #004280; }
+
+        /* Section B: Kanban Pipeline */
+        .kanban-board { display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 1rem; }
+        .kanban-col { background: #F1F5F9; border-radius: 8px; min-width: 300px; padding: 1rem; display: flex; flex-direction: column; gap: 1rem; border: 1px solid var(--border-color); }
+        .col-header { display: flex; justify-content: space-between; align-items: center; font-weight: 600; color: var(--secondary); font-size: 0.95rem; }
+        .badge { background: #E2E8F0; color: var(--text-dark); padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.8rem; }
+        
+        .applicant-card { background: var(--card-bg); padding: 1rem; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 4px solid var(--primary); cursor: grab; }
+        .applicant-card:active { cursor: grabbing; }
+        .card-header { display: flex; gap: 0.75rem; align-items: center; margin-bottom: 0.75rem; }
+        .app-avatar { width: 32px; height: 32px; border-radius: 50%; background: #CBD5E1; display: flex; justify-content: center; align-items: center; font-size: 0.75rem; font-weight: 600; }
+        .app-info h4 { font-size: 0.95rem; color: var(--text-dark); margin-bottom: 0.2rem; }
+        .app-info p { font-size: 0.75rem; color: var(--text-light); }
+        .skills-snippet { font-size: 0.8rem; color: var(--text-dark); background: #F8FAFC; padding: 0.5rem; border-radius: 4px; margin-bottom: 0.75rem; border: 1px solid var(--border-color); }
+        .card-actions { display: flex; flex-direction: column; gap: 0.5rem; }
+        .btn-view { display: block; text-align: center; background: white; border: 1px solid var(--border-color); color: var(--secondary); padding: 0.4rem; border-radius: 4px; font-size: 0.85rem; text-decoration: none; font-weight: 500; transition: background 0.2s; }
+        .btn-view:hover { background: #F8FAFC; }
+        
+        /* Section C: Quick Actions */
+        .actions-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+        .action-card { background: var(--card-bg); padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); text-align: center; border: 1px solid var(--border-color); }
+        .action-icon { font-size: 2rem; margin-bottom: 1rem; display: inline-block; padding: 1rem; background: #F8FAFC; border-radius: 50%; color: var(--primary); }
+        .action-card h4 { font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--secondary); }
+        .action-card p { font-size: 0.9rem; color: var(--text-light); }
+
+        .teams-note { text-align: center; margin-top: 2rem; padding: 1rem; background: #EBF5FF; border-radius: 8px; color: var(--primary); font-size: 0.95rem; border: 1px solid #BFDBFE; }
+        .teams-note a { color: var(--primary); font-weight: 600; }
+
+        @media (max-width: 768px) {
+            header.main-header { flex-direction: column; gap: 1rem; padding: 1rem; }
+            .page-header { flex-direction: column; gap: 1rem; text-align: center; }
+            .welcome-section { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="logo-container">
+            <h1>SPARK</h1>
+            <span>| Visteon Internal Portal</span>
+        </div>
+        <nav>
+            <a href="Home.html">Home</a>
+            <a href="Explore.aspx.html">Explore</a>
+            <a href="Manager-Hub.html" class="active">Manager Hub</a>
+            <a href="Rewards.html">Rewards</a>
+        </nav>
+        <div class="user-profile">
+            <div class="avatar">JD</div>
+            <span style="font-size: 0.9rem;">John Doe</span>
+        </div>
+    </header>
+
+    <div class="page-header">
+        <div class="welcome-section">
+            <div class="welcome-avatar">JD</div>
+            <div class="welcome-text">
+                <h2>Welcome, John Doe</h2>
+                <p>Manager Dashboard</p>
+            </div>
+        </div>
+        <div class="restriction-badge">🔒 Access restricted to SPARK Managers group</div>
+    </div>
+
+    <main>
+        <!-- Section A: My Opportunities -->
+        <section>
+            <h3 class="section-title">💼 My Opportunities</h3>
+            <div class="opp-table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Opportunity Title</th>
+                            <th>Category</th>
+                            <th>Openings</th>
+                            <th>Created Date</th>
+                            <th>Status Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Power Platform COE Governance</strong></td>
+                            <td>Process Improvement</td>
+                            <td>1</td>
+                            <td>Sep 01, 2026</td>
+                            <td>
+                                <div class="inline-edit">
+                                    <select class="status-select">
+                                        <option value="Open">Open</option>
+                                        <option value="Under Review" selected>Under Review</option>
+                                        <option value="Hold">Hold</option>
+                                        <option value="Completed">Completed</option>
+                                    </select>
+                                    <button class="btn-save" onclick="alert('Status updated successfully!')">Save</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>SharePoint Migration Helper Tool</strong></td>
+                            <td>Process Improvement</td>
+                            <td>4</td>
+                            <td>Aug 15, 2026</td>
+                            <td>
+                                <div class="inline-edit">
+                                    <select class="status-select">
+                                        <option value="Open" selected>Open</option>
+                                        <option value="Under Review">Under Review</option>
+                                        <option value="Hold">Hold</option>
+                                        <option value="Completed">Completed</option>
+                                    </select>
+                                    <button class="btn-save" onclick="alert('Status updated successfully!')">Save</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Section B: Applicants Pipeline -->
+        <section>
+            <h3 class="section-title">📊 Applicants Pipeline</h3>
+            <div class="kanban-board">
+                
+                <div class="kanban-col">
+                    <div class="col-header">
+                        Submitted <span class="badge">1</span>
+                    </div>
+                    <div class="applicant-card">
+                        <div class="card-header">
+                            <div class="app-avatar">AK</div>
+                            <div class="app-info">
+                                <h4>Amit Kumar</h4>
+                                <p>Applied: Sep 08, 2026</p>
+                            </div>
+                        </div>
+                        <div class="skills-snippet">
+                            <strong>Target:</strong> SharePoint Migration Tool<br>
+                            <strong>Skills:</strong> SPFx, React, Power Automate
+                        </div>
+                        <div class="card-actions">
+                            <a href="#" class="btn-view">View Full Profile</a>
+                            <div class="inline-edit" style="justify-content: space-between;">
+                                <select class="status-select" style="width: 70%;">
+                                    <option>Move to...</option>
+                                    <option value="review">Under Review</option>
+                                    <option value="discussion">Schedule Discussion</option>
+                                </select>
+                                <button class="btn-save" style="width: 25%;">Go</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="kanban-col">
+                    <div class="col-header">
+                        Under Review <span class="badge">1</span>
+                    </div>
+                    <div class="applicant-card" style="border-left-color: var(--warning);">
+                        <div class="card-header">
+                            <div class="app-avatar">RS</div>
+                            <div class="app-info">
+                                <h4>Rahul Singh</h4>
+                                <p>Applied: Sep 05, 2026</p>
+                            </div>
+                        </div>
+                        <div class="skills-snippet">
+                            <strong>Target:</strong> Power Platform COE<br>
+                            <strong>Skills:</strong> PowerApps, Dataverse
+                        </div>
+                        <div class="card-actions">
+                            <a href="#" class="btn-view">View Full Profile</a>
+                            <div class="inline-edit" style="justify-content: space-between;">
+                                <select class="status-select" style="width: 70%;">
+                                    <option>Move to...</option>
+                                    <option value="discussion">Schedule Discussion</option>
+                                    <option value="reject">Reject</option>
+                                </select>
+                                <button class="btn-save" style="width: 25%;">Go</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="kanban-col">
+                    <div class="col-header">
+                        Discussion Scheduled <span class="badge">0</span>
+                    </div>
+                    <!-- Empty State -->
+                    <div style="text-align: center; color: var(--text-light); font-size: 0.9rem; padding: 1rem; border: 1px dashed var(--border-color); border-radius: 4px;">
+                        Drop candidates here
+                    </div>
+                </div>
+
+                <div class="kanban-col">
+                    <div class="col-header">
+                        Shortlisted <span class="badge">0</span>
+                    </div>
+                    <div style="text-align: center; color: var(--text-light); font-size: 0.9rem; padding: 1rem; border: 1px dashed var(--border-color); border-radius: 4px;">
+                        Drop candidates here
+                    </div>
+                </div>
+
+                <div class="kanban-col">
+                    <div class="col-header">
+                        Onboarded <span class="badge">1</span>
+                    </div>
+                    <div class="applicant-card" style="border-left-color: var(--success); opacity: 0.8;">
+                        <div class="card-header">
+                            <div class="app-avatar">MN</div>
+                            <div class="app-info">
+                                <h4>Meera Nair</h4>
+                                <p>Applied: Aug 20, 2026</p>
+                            </div>
+                        </div>
+                        <div class="skills-snippet">
+                            <strong>Target:</strong> SharePoint Migration Tool
+                        </div>
+                        <div class="card-actions">
+                            <a href="#" class="btn-view">View Final Record</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Section C: Quick Actions Guide -->
+        <section>
+            <h3 class="section-title">⚡ Quick Actions Guide</h3>
+            <div class="actions-grid">
+                <div class="action-card">
+                    <div class="action-icon">📄</div>
+                    <h4>1. Review Profile</h4>
+                    <p>Evaluate the applicant's skills, availability, and manager approval status.</p>
+                </div>
+                <div class="action-card">
+                    <div class="action-icon">📅</div>
+                    <h4>2. Schedule Discussion</h4>
+                    <p>Update status to 'Discussion Scheduled' and reach out via Teams to align.</p>
+                </div>
+                <div class="action-card">
+                    <div class="action-icon">✅</div>
+                    <h4>3. Accept / Reject</h4>
+                    <p>Finalize the decision. Onboarded applicants are notified automatically.</p>
+                </div>
+            </div>
+
+            <div class="teams-note">
+                Note: Actual discussions and meetings happen via <a href="#" onclick="alert('Opening MS Teams')">Microsoft Teams</a> or Outlook. Use SPARK strictly to track application status.
+            </div>
+        </section>
+    </main>
+
+</body>
+</html>

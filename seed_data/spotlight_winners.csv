@@ -1,0 +1,7 @@
+Title,PersonName,Award,ProjectTitle,Story,Month
+"Spotlight on Innovation","Aditi Sharma","Innovation Champion","Predictive Maintenance ML Model","Aditi single-handedly optimized the time-series forecasting algorithm, increasing the model accuracy by 15% and directly saving thousands in downtime costs.","August 2026"
+"Star Performer","Manish Jain","Performer of Month","Predictive Maintenance ML Model","Manish worked tirelessly to integrate the Python backend with the Power BI dashboard, ensuring a seamless real-time experience for the floor managers.","July 2026"
+"Team Player Award","Sandeep Kaur","Best Collaborator","Predictive Maintenance ML Model","Sandeep bridged the gap between the data scientists and the factory floor workers, ensuring the final dashboard was perfectly tailored to user needs.","August 2026"
+"Rising Star Award","Varun Balakrishnan","Rising Star","CAN Bus Data Logger Optimization","Varun, despite being a junior engineer, identified a critical memory leak in the legacy C code that had plagued the logger for years.","August 2026"
+"Engineering Excellence","Shruti Iyer","Innovation Champion","CAN Bus Data Logger Optimization","Shruti introduced a novel multi-threading approach that allowed the logger to capture high-speed CAN FD frames without any packet loss.","July 2026"
+"Top Contributor","Tarun Vashisth","Performer of Month","CAN Bus Data Logger Optimization","Tarun rewrote the entire .NET visualization interface, making it 3x faster and significantly more user-friendly for the validation engineers.","August 2026"

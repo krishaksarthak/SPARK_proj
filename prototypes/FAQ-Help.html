@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help & FAQ - SPARK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #005BAB;
+            --dark-header: #1A1A2E;
+            --body-bg: #F5F7FA;
+            --white: #FFFFFF;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --border: #E0E0E0;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        
+        body { background-color: var(--body-bg); color: var(--text-main); line-height: 1.6; }
+        
+        header { background-color: var(--dark-header); color: var(--white); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        header .logo { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+        
+        .hero { background: linear-gradient(135deg, var(--primary) 0%, var(--dark-header) 100%); color: white; padding: 4rem 2rem; text-align: center; }
+        .hero h1 { font-size: 2.5rem; margin-bottom: 1.5rem; }
+        .search-bar { max-width: 600px; margin: 0 auto; display: flex; }
+        .search-bar input { flex: 1; padding: 1rem; border: none; border-radius: 4px 0 0 4px; font-size: 1rem; }
+        .search-bar button { padding: 1rem 2rem; background: #333; color: white; border: none; border-radius: 0 4px 4px 0; cursor: pointer; font-weight: 600; }
+        
+        .container { max-width: 1200px; margin: -2rem auto 2rem; padding: 0 2rem; display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; position: relative; z-index: 10; }
+        @media (max-width: 768px) { .container { grid-template-columns: 1fr; } }
+        
+        .faq-section { background: var(--white); border-radius: 8px; padding: 2rem; box-shadow: var(--shadow); }
+        .faq-section h2 { margin-bottom: 1.5rem; color: var(--dark-header); font-size: 1.5rem; }
+        
+        .accordion-item { border-bottom: 1px solid var(--border); margin-bottom: 1rem; }
+        .accordion-header { width: 100%; text-align: left; background: none; border: none; padding: 1rem 0; font-size: 1.1rem; font-weight: 600; color: var(--text-main); cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .accordion-header::after { content: '+'; font-size: 1.5rem; color: var(--primary); }
+        .accordion-item.active .accordion-header::after { content: '−'; }
+        
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; color: var(--text-muted); }
+        .accordion-content p { padding-bottom: 1rem; }
+        
+        .sidebar { display: flex; flex-direction: column; gap: 2rem; }
+        
+        .bot-card { background: var(--white); border-radius: 8px; overflow: hidden; box-shadow: var(--shadow); border: 1px solid var(--primary); }
+        .bot-header { background: var(--primary); color: white; padding: 1rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; }
+        .bot-chat { padding: 1rem; height: 250px; overflow-y: auto; background: #f8f9fa; display: flex; flex-direction: column; gap: 1rem; }
+        .bubble { max-width: 80%; padding: 0.75rem; border-radius: 8px; font-size: 0.9rem; }
+        .bubble.bot { background: #e2e8f0; align-self: flex-start; border-bottom-left-radius: 0; }
+        .bubble.user { background: var(--primary); color: white; align-self: flex-end; border-bottom-right-radius: 0; }
+        .bot-input { display: flex; padding: 1rem; border-top: 1px solid var(--border); background: var(--white); }
+        .bot-input input { flex: 1; padding: 0.5rem; border: 1px solid var(--border); border-radius: 4px; margin-right: 0.5rem; }
+        .bot-input button { background: var(--primary); color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; }
+        .bot-note { font-size: 0.75rem; text-align: center; color: var(--text-muted); padding-bottom: 0.5rem; }
+        
+        .contact-card { background: var(--white); border-radius: 8px; padding: 1.5rem; box-shadow: var(--shadow); }
+        .contact-card h3 { margin-bottom: 1rem; font-size: 1.1rem; }
+        .contact-person { margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+        .contact-person:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .contact-person strong { display: block; color: var(--dark-header); }
+        .contact-person span { font-size: 0.9rem; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">SPARK</div>
+        <div>Portal Navigation</div>
+    </header>
+
+    <div class="hero">
+        <h1>Help & FAQ</h1>
+        <div class="search-bar">
+            <input type="text" placeholder="Search for answers...">
+            <button>Search</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <main class="faq-section">
+            <h2>Frequently Asked Questions</h2>
+            
+            <div style="margin-bottom: 2rem;">
+                <h3 style="color: var(--primary); margin-bottom: 1rem; font-size: 1.2rem;">1. Finding Opportunities</h3>
+                <div class="accordion-item">
+                    <button class="accordion-header">How do I find opportunities by tech stack?</button>
+                    <div class="accordion-content">
+                        <p>Use the filters on the Explore page. You can filter by 'Technology' tags such as React, Python, Power BI, etc., or use the keyword search bar.</p>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <button class="accordion-header">Can I apply to multiple opportunities?</button>
+                    <div class="accordion-content">
+                        <p>Yes, you can have up to 3 active applications at any given time. Once an application is closed (accepted/rejected/completed), you can apply for more.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 2rem;">
+                <h3 style="color: var(--primary); margin-bottom: 1rem; font-size: 1.2rem;">2. Application Process</h3>
+                <div class="accordion-item">
+                    <button class="accordion-header">What happens after I apply?</button>
+                    <div class="accordion-content">
+                        <p>The mentor who posted the opportunity gets notified immediately via email and Teams. Your current line manager will also receive a courtesy notification.</p>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <button class="accordion-header">How long does the review take?</button>
+                    <div class="accordion-content">
+                        <p>Mentors typically review applications within 5 business days. You can track your application status in the 'My Applications' tab.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 2rem;">
+                <h3 style="color: var(--primary); margin-bottom: 1rem; font-size: 1.2rem;">3. For Managers & Mentors</h3>
+                <div class="accordion-item">
+                    <button class="accordion-header">How do I post an opportunity?</button>
+                    <div class="accordion-content">
+                        <p>Navigate to the 'Manager Hub' and click 'New Opportunity'. Fill in the project details, required skills, and effort needed, then submit for approval.</p>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <button class="accordion-header">How do I review applicants?</button>
+                    <div class="accordion-content">
+                        <p>In the Manager Hub, click on your active opportunity to see the applicant list. You can review their profiles and change their status to 'Interviewing', 'Accepted', or 'Rejected'.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 2rem;">
+                <h3 style="color: var(--primary); margin-bottom: 1rem; font-size: 1.2rem;">4. Recognition & Rewards</h3>
+                <div class="accordion-item">
+                    <button class="accordion-header">How are winners selected?</button>
+                    <div class="accordion-content">
+                        <p>Upon successful completion of a project, the mentor assesses the contribution. Exceptional contributions are nominated for the monthly SPARK Innovation Awards.</p>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <button class="accordion-header">Can I nominate a colleague?</button>
+                    <div class="accordion-content">
+                        <p>Yes, peer nominations are accepted through the 'Rewards' page, subject to validation by the project mentor.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <h3 style="color: var(--primary); margin-bottom: 1rem; font-size: 1.2rem;">5. Technical Help</h3>
+                <div class="accordion-item">
+                    <button class="accordion-header">I can't access Manager Hub?</button>
+                    <div class="accordion-content">
+                        <p>Access to the Manager Hub is restricted to users with Manager or Mentor roles. If you need access, please request it via the IT Service Portal.</p>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <button class="accordion-header">My application status hasn't changed in weeks?</button>
+                    <div class="accordion-content">
+                        <p>If an application is stuck, please reach out to the opportunity mentor directly via Teams, or contact the SPARK Admin team.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <aside class="sidebar">
+            <div class="bot-card">
+                <div class="bot-header">
+                    🤖 Ask SPARK Assistant
+                </div>
+                <div class="bot-chat">
+                    <div class="bubble bot">Hi! I'm the SPARK Assistant. How can I help you today?</div>
+                    <div class="bubble user">How many hours per week is required?</div>
+                    <div class="bubble bot">Most opportunities require between 2 to 5 hours per week, but you can find the exact effort required on the specific Opportunity Details page.</div>
+                </div>
+                <div class="bot-input">
+                    <input type="text" placeholder="Type your question...">
+                    <button>Send</button>
+                </div>
+                <div class="bot-note">Powered by Copilot Studio - Connect your bot endpoint here</div>
+            </div>
+
+            <div class="contact-card">
+                <h3>Still need help?</h3>
+                <div class="contact-person">
+                    <strong>SPARK Admin Team</strong>
+                    <span>System Issues & General Queries</span><br>
+                    <a href="mailto:spark-admin@visteon.com">spark-admin@visteon.com</a>
+                </div>
+                <div class="contact-person">
+                    <strong>Jane Doe (HR SPOC)</strong>
+                    <span>Policy & Manager Approvals</span><br>
+                    <a href="mailto:jdoe@visteon.com">jdoe@visteon.com</a>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <script>
+        document.querySelectorAll('.accordion-header').forEach(button => {
+            button.addEventListener('click', () => {
+                const accordionItem = button.parentElement;
+                const content = button.nextElementSibling;
+                
+                // Toggle active class
+                accordionItem.classList.toggle('active');
+                
+                // Animate height
+                if (accordionItem.classList.contains('active')) {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                } else {
+                    content.style.maxHeight = null;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

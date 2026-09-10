@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPARK Platform - Home</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* CSS reset and vars */
+        :root {
+            --primary-blue: #005BAB;
+            --primary-dark: #003D7A;
+            --dark-bg: #1A1A2E;
+            --body-bg: #F5F7FA;
+            --white: #FFFFFF;
+            --text-main: #333333;
+            --text-light: #666666;
+            --border-color: #E2E8F0;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            --shadow-hover: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            --transition: all 0.3s ease;
+            --font-main: 'Inter', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; font-family: var(--font-main); }
+        body { background-color: var(--body-bg); color: var(--text-main); line-height: 1.6; }
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+        img { max-width: 100%; display: block; }
+        button { cursor: pointer; font-family: var(--font-main); border: none; outline: none; }
+
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 { font-weight: 700; line-height: 1.2; }
+        h1 { font-size: 2.5rem; }
+        h2 { font-size: 2rem; margin-bottom: 1rem; color: var(--text-main); }
+        .section-subtitle { color: var(--text-light); font-size: 1.1rem; margin-bottom: 2rem; }
+
+        /* Container */
+        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+
+        /* Global Classes */
+        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.75rem 1.5rem; border-radius: var(--radius-md); font-weight: 600; transition: var(--transition); }
+        .btn-primary { background-color: var(--primary-blue); color: var(--white); }
+        .btn-primary:hover { background-color: var(--primary-dark); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .btn-white { background-color: var(--white); color: var(--primary-blue); }
+        .btn-white:hover { background-color: #f8fafc; transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .btn-outline { border: 2px solid var(--white); color: var(--white); background: transparent; }
+        .btn-outline:hover { background-color: rgba(255,255,255,0.1); transform: translateY(-2px); }
+        .btn-sm { padding: 0.5rem 1rem; font-size: 0.875rem; }
+
+        .card { background-color: var(--white); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); transition: var(--transition); overflow: hidden; }
+        .card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+
+        .section-padding { padding: 5rem 0; }
+        
+        /* 1. TOP NAV */
+        .header { background-color: var(--dark-bg); position: sticky; top: 0; z-index: 1000; box-shadow: var(--shadow-md); }
+        .nav-container { display: flex; justify-content: space-between; align-items: center; height: 72px; }
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--white); display: flex; align-items: center; gap: 0.5rem; }
+        .nav-links { display: flex; gap: 2rem; }
+        .nav-links a { color: var(--white); font-weight: 500; font-size: 0.95rem; position: relative; transition: var(--transition); opacity: 0.9; }
+        .nav-links a:hover { opacity: 1; color: #60A5FA; }
+        .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background-color: var(--primary-blue); transition: var(--transition); }
+        .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+        .nav-links a.active { opacity: 1; color: var(--white); font-weight: 600; }
+        .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; }
+        .hamburger span { display: block; width: 25px; height: 3px; background-color: var(--white); border-radius: 3px; transition: var(--transition); }
+
+        /* Mobile Nav */
+        .mobile-menu { position: fixed; top: 72px; left: 0; width: 100%; background-color: var(--dark-bg); padding: 1rem; flex-direction: column; gap: 1rem; box-shadow: var(--shadow-md); display: none; border-top: 1px solid rgba(255,255,255,0.1); z-index: 999; }
+        .mobile-menu.active { display: flex; animation: slideDown 0.3s ease forwards; }
+        .mobile-menu a { color: var(--white); font-weight: 500; padding: 0.75rem 1rem; border-radius: var(--radius-md); display: block; }
+        .mobile-menu a:hover, .mobile-menu a.active { background-color: rgba(255,255,255,0.1); }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hamburger { display: flex; }
+        }
+
+        /* 2. HERO BANNER */
+        .hero { background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-dark) 100%); height: 520px; display: flex; align-items: center; position: relative; overflow: hidden; }
+        .hero-bg-shapes { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; opacity: 0.1; }
+        .hero-container { position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: center; gap: 2rem; width: 100%; }
+        .hero-content { flex: 1; max-width: 600px; color: var(--white); }
+        .hero-content h1 { font-size: 3.5rem; margin-bottom: 1.5rem; letter-spacing: -0.02em; animation: fadeUp 0.8s ease forwards; }
+        .hero-content p { font-size: 1.25rem; margin-bottom: 2.5rem; opacity: 0.9; animation: fadeUp 0.8s ease 0.2s forwards; opacity: 0; }
+        .hero-buttons { display: flex; gap: 1rem; animation: fadeUp 0.8s ease 0.4s forwards; opacity: 0; }
+        
+        .hero-stats { flex: 1; display: flex; flex-direction: column; gap: 1.5rem; align-items: flex-end; position: relative; }
+        .hero-stat-card { background: var(--white); padding: 1.25rem 1.5rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); display: flex; align-items: center; gap: 1rem; min-width: 260px; transform: translateX(50px); opacity: 0; animation: slideInRight 0.6s ease forwards; }
+        .hero-stat-card:nth-child(1) { animation-delay: 0.3s; margin-right: 2rem; }
+        .hero-stat-card:nth-child(2) { animation-delay: 0.5s; }
+        .hero-stat-card:nth-child(3) { animation-delay: 0.7s; margin-right: 4rem; }
+        .stat-icon { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; background-color: rgba(0, 91, 171, 0.1); }
+        .stat-info h4 { font-size: 1.5rem; color: var(--text-main); margin-bottom: 0.25rem; }
+        .stat-info p { font-size: 0.875rem; color: var(--text-light); }
+
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideInRight { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+
+        @media (max-width: 992px) {
+            .hero { height: auto; padding: 4rem 0; }
+            .hero-container { flex-direction: column; text-align: center; }
+            .hero-content { align-items: center; display: flex; flex-direction: column; }
+            .hero-stats { align-items: center; margin-top: 2rem; }
+            .hero-stat-card { margin-right: 0 !important; }
+        }
+        @media (max-width: 576px) {
+            .hero-content h1 { font-size: 2.5rem; }
+            .hero-buttons { flex-direction: column; width: 100%; }
+            .hero-buttons .btn { width: 100%; }
+        }
+
+        /* 3. STATS STRIP */
+        .stats-strip { background-color: var(--primary-dark); color: var(--white); padding: 1.5rem 0; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
+        .stats-strip-container { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 1rem; }
+        .strip-stat { display: flex; align-items: center; gap: 0.75rem; font-weight: 600; font-size: 1.1rem; }
+        .strip-stat span { font-size: 1.25rem; }
+
+        @media (max-width: 768px) {
+            .stats-strip-container { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; text-align: center; justify-items: center; }
+        }
+        @media (max-width: 480px) {
+            .stats-strip-container { grid-template-columns: 1fr; }
+        }
+
+        /* 4. NEW OPPORTUNITIES */
+        .opps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+        .opp-card { display: flex; flex-direction: column; height: 100%; }
+        .opp-img { height: 160px; position: relative; }
+        .opp-img.pbi { background: linear-gradient(45deg, #f97316, #ea580c); }
+        .opp-img.ai { background: linear-gradient(45deg, #a855f7, #7e22ce); }
+        .opp-img.sp { background: linear-gradient(45deg, #22c55e, #15803d); }
+        .opp-img.emb { background: linear-gradient(45deg, #14b8a6, #0f766e); }
+        
+        .cat-pill { position: absolute; top: 1rem; left: 1rem; background: rgba(0,0,0,0.6); color: var(--white); font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.75rem; border-radius: 100px; backdrop-filter: blur(4px); }
+        .opp-content { padding: 1.5rem; display: flex; flex-direction: column; flex-grow: 1; }
+        .opp-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.75rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.6rem; }
+        .tech-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+        .tech-pill { background-color: #E0F2FE; color: #0284C7; font-size: 0.75rem; font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 4px; }
+        .opp-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; font-size: 0.875rem; color: var(--text-light); }
+        .opp-meta div { display: flex; align-items: center; gap: 0.25rem; }
+        .status-pill { background-color: #DCFCE7; color: #166534; font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 100px; }
+        .opp-footer { margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .mentor { display: flex; align-items: center; gap: 0.5rem; }
+        .mentor-avatar { width: 32px; height: 32px; border-radius: 50%; background-color: var(--primary-blue); color: var(--white); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; }
+        .mentor-name { font-size: 0.875rem; font-weight: 500; }
+
+        @media (max-width: 1024px) { .opps-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 576px) { .opps-grid { grid-template-columns: 1fr; } }
+
+        /* 5. FEATURED PROJECTS */
+        .featured-section { background-color: var(--dark-bg); color: var(--white); padding: 5rem 0; overflow: hidden; }
+        .featured-section h2 { color: var(--white); }
+        .featured-carousel { display: flex; gap: 1.5rem; overflow-x: auto; padding-bottom: 1rem; scrollbar-width: thin; scrollbar-color: var(--primary-blue) var(--dark-bg); }
+        .featured-carousel::-webkit-scrollbar { height: 8px; }
+        .featured-carousel::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 100px; }
+        .featured-carousel::-webkit-scrollbar-thumb { background: var(--primary-blue); border-radius: 100px; }
+        
+        .project-card { min-width: 350px; background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-xl); padding: 2rem; transition: var(--transition); }
+        .project-card:hover { transform: translateY(-4px); background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%); border-color: rgba(255,255,255,0.2); }
+        .proj-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--white); }
+        .proj-team { font-size: 0.875rem; color: #94A3B8; margin-bottom: 1.5rem; }
+        .progress-label { display: flex; justify-content: space-between; font-size: 0.875rem; margin-bottom: 0.5rem; color: #E2E8F0; font-weight: 500; }
+        .progress-bar-bg { width: 100%; height: 8px; background-color: rgba(255,255,255,0.1); border-radius: 100px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background-color: #3B82F6; border-radius: 100px; }
+
+        @media (max-width: 768px) { .project-card { min-width: 280px; } }
+
+        /* 6. SUCCESS STORIES */
+        .stories-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+        .story-card { padding: 2rem; border-left: 4px solid var(--primary-blue); position: relative; }
+        .quote-icon { position: absolute; top: 1rem; right: 1.5rem; font-size: 3rem; color: rgba(0, 91, 171, 0.05); line-height: 1; }
+        .story-excerpt { font-size: 1.1rem; color: var(--text-main); margin-bottom: 1.5rem; position: relative; z-index: 1; font-style: italic; }
+        .story-author { display: flex; align-items: center; gap: 1rem; }
+        .author-photo { width: 48px; height: 48px; border-radius: 50%; background-color: var(--primary-dark); color: var(--white); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; }
+        .author-info h5 { font-size: 1rem; margin-bottom: 0.1rem; }
+        .author-info p { font-size: 0.875rem; color: var(--text-light); }
+        .story-proj { margin-top: 1rem; font-size: 0.875rem; color: var(--primary-blue); font-weight: 600; display: inline-block; background: #E0F2FE; padding: 0.25rem 0.75rem; border-radius: 100px; }
+
+        @media (max-width: 768px) { .stories-grid { grid-template-columns: 1fr; } }
+
+        /* 7. EMPLOYEE TESTIMONIALS */
+        .testimonials-section { background-color: #E0F2FE; }
+        .test-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+        .test-card { background: transparent; padding: 2rem; text-align: center; border-radius: var(--radius-lg); transition: var(--transition); }
+        .test-card:hover { background: var(--white); box-shadow: var(--shadow-md); transform: translateY(-4px); }
+        .large-quote { font-size: 4rem; color: var(--primary-blue); line-height: 0; margin-bottom: 2rem; font-family: serif; opacity: 0.2; }
+        .test-text { font-size: 1.1rem; font-style: italic; margin-bottom: 1.5rem; color: var(--text-main); }
+        .test-name { font-weight: 700; color: var(--primary-dark); }
+
+        @media (max-width: 768px) { .test-grid { grid-template-columns: 1fr; } }
+
+        /* 8. REWARD WINNERS */
+        .winners-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+        .winner-card { text-align: center; padding: 2.5rem 1.5rem; border: 1px solid var(--border-color); }
+        .medal-icon { font-size: 3rem; margin-bottom: 1rem; display: inline-block; animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+        .winner-name { font-size: 1.25rem; font-weight: 800; margin-bottom: 0.25rem; }
+        .winner-award { color: #D97706; font-weight: 600; font-size: 1rem; margin-bottom: 1rem; }
+        .winner-proj { font-size: 0.875rem; color: var(--text-light); margin-bottom: 0.5rem; }
+        .winner-month { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: #94A3B8; font-weight: 700; }
+
+        @media (max-width: 992px) { .winners-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 576px) { .winners-grid { grid-template-columns: 1fr; } }
+
+        /* 9. VIDEOS & DEMOS */
+        .videos-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+        .video-card { display: flex; flex-direction: column; gap: 1rem; }
+        .video-placeholder { width: 100%; aspect-ratio: 16/9; background-color: #0F172A; border-radius: var(--radius-lg); position: relative; cursor: pointer; overflow: hidden; box-shadow: var(--shadow-md); transition: var(--transition); }
+        .video-placeholder:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+        .video-placeholder::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.2); transition: var(--transition); }
+        .video-placeholder:hover::after { background: rgba(0,0,0,0.4); }
+        .play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 64px; height: 64px; background-color: var(--primary-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 2; transition: var(--transition); }
+        .play-btn::before { content: ''; width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 16px solid var(--white); margin-left: 6px; }
+        .video-placeholder:hover .play-btn { transform: translate(-50%, -50%) scale(1.1); }
+        .video-title { font-size: 1.1rem; font-weight: 600; text-align: center; }
+
+        @media (max-width: 768px) { .videos-grid { grid-template-columns: 1fr; } }
+
+        /* 10. FOOTER */
+        .footer { background-color: var(--dark-bg); color: #94A3B8; padding: 4rem 0 2rem; margin-top: 2rem; }
+        .footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.5fr; gap: 2rem; margin-bottom: 3rem; }
+        .footer-brand .logo { margin-bottom: 1rem; }
+        .footer-brand p { font-size: 0.9rem; margin-bottom: 1rem; max-width: 300px; }
+        .footer-title { color: var(--white); font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem; }
+        .footer-links { display: flex; flex-direction: column; gap: 0.75rem; }
+        .footer-links a { transition: var(--transition); font-size: 0.9rem; }
+        .footer-links a:hover { color: var(--white); padding-left: 4px; }
+        
+        .subscribe-form { display: flex; flex-direction: column; gap: 1rem; }
+        .subscribe-input { padding: 0.75rem 1rem; border-radius: var(--radius-md); border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: var(--white); width: 100%; outline: none; transition: var(--transition); }
+        .subscribe-input:focus { border-color: var(--primary-blue); background: rgba(255,255,255,0.1); }
+        
+        .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2rem; text-align: center; font-size: 0.875rem; }
+
+        @media (max-width: 992px) { .footer-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 576px) { .footer-grid { grid-template-columns: 1fr; } }
+
+    </style>
+</head>
+<body>
+
+    <!-- 1. TOP NAV -->
+    <header class="header">
+        <div class="container nav-container">
+            <a href="#" class="logo">✨ SPARK</a>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#" class="active">Home</a></li>
+                    <li><a href="#opportunities">Opportunities</a></li>
+                    <li><a href="#manager-hub">Manager Hub</a></li>
+                    <li><a href="#rewards">Rewards</a></li>
+                    <li><a href="#faq">FAQ</a></li>
+                </ul>
+            </nav>
+            <button class="hamburger" id="hamburger-btn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobile-menu">
+            <a href="#" class="active">Home</a>
+            <a href="#opportunities">Opportunities</a>
+            <a href="#manager-hub">Manager Hub</a>
+            <a href="#rewards">Rewards</a>
+            <a href="#faq">FAQ</a>
+        </div>
+    </header>
+
+    <!-- 2. HERO BANNER -->
+    <section class="hero">
+        <div class="container hero-container">
+            <div class="hero-content">
+                <h1>Unlock Your Potential.<br>Drive Innovation.</h1>
+                <p>SPARK connects Visteon talent with high-impact projects, mentors, and recognition.</p>
+                <div class="hero-buttons">
+                    <a href="#opportunities" class="btn btn-white">Explore Opportunities</a>
+                    <a href="#about" class="btn btn-outline">Learn How It Works</a>
+                </div>
+            </div>
+            <div class="hero-stats">
+                <div class="hero-stat-card">
+                    <div class="stat-icon">🚀</div>
+                    <div class="stat-info">
+                        <h4>12</h4>
+                        <p>Open Opportunities</p>
+                    </div>
+                </div>
+                <div class="hero-stat-card">
+                    <div class="stat-icon">📝</div>
+                    <div class="stat-info">
+                        <h4>45</h4>
+                        <p>Total Applications</p>
+                    </div>
+                </div>
+                <div class="hero-stat-card">
+                    <div class="stat-icon">👨‍🏫</div>
+                    <div class="stat-info">
+                        <h4>8</h4>
+                        <p>Expert Mentors</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. STATS STRIP -->
+    <section class="stats-strip">
+        <div class="container stats-strip-container">
+            <div class="strip-stat"><span>🚀</span> 12 Open Opportunities</div>
+            <div class="strip-stat"><span>📝</span> 45 Applications Submitted</div>
+            <div class="strip-stat"><span>👨‍🏫</span> 8 Expert Mentors</div>
+            <div class="strip-stat"><span>⭐</span> 6 Stars Awarded</div>
+        </div>
+    </section>
+
+    <!-- 4. NEW OPPORTUNITIES -->
+    <section id="opportunities" class="section-padding">
+        <div class="container">
+            <h2>New Opportunities</h2>
+            <p class="section-subtitle">Curated picks for you</p>
+            
+            <div class="opps-grid">
+                <!-- Card 1 -->
+                <div class="card opp-card">
+                    <div class="opp-img pbi">
+                        <span class="cat-pill">Analytics</span>
+                    </div>
+                    <div class="opp-content">
+                        <h3 class="opp-title">EV Dashboard POC with Power BI</h3>
+                        <div class="tech-pills">
+                            <span class="tech-pill">Power BI</span>
+                            <span class="tech-pill">Data Modeling</span>
+                        </div>
+                        <div class="opp-meta">
+                            <div><span>⏱️</span> 8 Weeks</div>
+                            <div><span>👥</span> 2 Openings</div>
+                        </div>
+                        <div class="opp-meta">
+                            <span class="status-pill">Open</span>
+                        </div>
+                        <div class="opp-footer">
+                            <div class="mentor">
+                                <div class="mentor-avatar">JD</div>
+                                <span class="mentor-name">John Doe</span>
+                            </div>
+                            <button class="btn btn-primary btn-sm">View Details</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Card 2 -->
+                <div class="card opp-card">
+                    <div class="opp-img ai">
+                        <span class="cat-pill">AI/ML</span>
+                    </div>
+                    <div class="opp-content">
+                        <h3 class="opp-title">AI Defect Classifier for ADAS</h3>
+                        <div class="tech-pills">
+                            <span class="tech-pill">Python</span>
+                            <span class="tech-pill">TensorFlow</span>
+                        </div>
+                        <div class="opp-meta">
+                            <div><span>⏱️</span> 12 Weeks</div>
+                            <div><span>👥</span> 1 Opening</div>
+                        </div>
+                        <div class="opp-meta">
+                            <span class="status-pill">Open</span>
+                        </div>
+                        <div class="opp-footer">
+                            <div class="mentor">
+                                <div class="mentor-avatar">AS</div>
+                                <span class="mentor-name">Alice Smith</span>
+                            </div>
+                            <button class="btn btn-primary btn-sm">View Details</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="card opp-card">
+                    <div class="opp-img sp">
+                        <span class="cat-pill">Web Dev</span>
+                    </div>
+                    <div class="opp-content">
+                        <h3 class="opp-title">SharePoint Migration Helper Tool</h3>
+                        <div class="tech-pills">
+                            <span class="tech-pill">SPFx</span>
+                            <span class="tech-pill">React</span>
+                        </div>
+                        <div class="opp-meta">
+                            <div><span>⏱️</span> 6 Weeks</div>
+                            <div><span>👥</span> 3 Openings</div>
+                        </div>
+                        <div class="opp-meta">
+                            <span class="status-pill">Open</span>
+                        </div>
+                        <div class="opp-footer">
+                            <div class="mentor">
+                                <div class="mentor-avatar">RJ</div>
+                                <span class="mentor-name">Raj Patel</span>
+                            </div>
+                            <button class="btn btn-primary btn-sm">View Details</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="card opp-card">
+                    <div class="opp-img emb">
+                        <span class="cat-pill">Engineering</span>
+                    </div>
+                    <div class="opp-content">
+                        <h3 class="opp-title">Embedded HMI Test Automation</h3>
+                        <div class="tech-pills">
+                            <span class="tech-pill">C++</span>
+                            <span class="tech-pill">Jenkins</span>
+                        </div>
+                        <div class="opp-meta">
+                            <div><span>⏱️</span> 10 Weeks</div>
+                            <div><span>👥</span> 2 Openings</div>
+                        </div>
+                        <div class="opp-meta">
+                            <span class="status-pill">Open</span>
+                        </div>
+                        <div class="opp-footer">
+                            <div class="mentor">
+                                <div class="mentor-avatar">MK</div>
+                                <span class="mentor-name">Maria Garcia</span>
+                            </div>
+                            <button class="btn btn-primary btn-sm">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. FEATURED PROJECTS -->
+    <section class="featured-section">
+        <div class="container">
+            <h2>Featured Projects</h2>
+            <p class="section-subtitle" style="color: #94A3B8;">High priority initiatives</p>
+            
+            <div class="featured-carousel">
+                <div class="project-card">
+                    <h3 class="proj-title">Next-Gen Digital Cockpit UI</h3>
+                    <p class="proj-team">Team: HMI Advanced Engineering</p>
+                    <div class="progress-label"><span>Positions Filled</span><span>75%</span></div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" style="width: 75%;"></div>
+                    </div>
+                </div>
+                
+                <div class="project-card">
+                    <h3 class="proj-title">Global Cloud Cost Optimization</h3>
+                    <p class="proj-team">Team: IT Infrastructure</p>
+                    <div class="progress-label"><span>Positions Filled</span><span>40%</span></div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" style="width: 40%;"></div>
+                    </div>
+                </div>
+                
+                <div class="project-card">
+                    <h3 class="proj-title">Battery Management System V2</h3>
+                    <p class="proj-team">Team: EV Powertrain</p>
+                    <div class="progress-label"><span>Positions Filled</span><span>90%</span></div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" style="width: 90%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. SUCCESS STORIES -->
+    <section class="section-padding">
+        <div class="container">
+            <h2>Success Stories</h2>
+            <p class="section-subtitle">Impact created by SPARK participants</p>
+            
+            <div class="stories-grid">
+                <div class="card story-card">
+                    <div class="quote-icon">"</div>
+                    <p class="story-excerpt">"Through this project, I transitioned from a traditional QA role into Machine Learning. The mentorship was incredible, and our model is now in production."</p>
+                    <div class="story-author">
+                        <div class="author-photo" style="background:#10B981;">SJ</div>
+                        <div class="author-info">
+                            <h5>Sarah Jenkins</h5>
+                            <p>Software Engineer</p>
+                        </div>
+                    </div>
+                    <span class="story-proj">Predictive Maintenance ML Model</span>
+                </div>
+                
+                <div class="card story-card">
+                    <div class="quote-icon">"</div>
+                    <p class="story-excerpt">"Collaborating across regions to optimize the CAN data logger was a massive learning curve. It challenged me technically and helped build my global network at Visteon."</p>
+                    <div class="story-author">
+                        <div class="author-photo" style="background:#F59E0B;">DL</div>
+                        <div class="author-info">
+                            <h5>David Lee</h5>
+                            <p>Embedded Systems Specialist</p>
+                        </div>
+                    </div>
+                    <span class="story-proj">CAN Bus Data Logger Optimization</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. EMPLOYEE TESTIMONIALS -->
+    <section class="testimonials-section section-padding">
+        <div class="container">
+            <h2 style="text-align: center;">Hear From Your Peers</h2>
+            <p class="section-subtitle" style="text-align: center;">Why employees love the SPARK platform</p>
+            
+            <div class="test-grid">
+                <div class="test-card">
+                    <div class="large-quote">"</div>
+                    <p class="test-text">"SPARK allowed me to work on a high-visibility project outside my day-to-day responsibilities. It accelerated my promotion and broadened my skill set significantly."</p>
+                    <p class="test-name">- Emily Chen, Product Manager</p>
+                </div>
+                
+                <div class="test-card">
+                    <div class="large-quote">"</div>
+                    <p class="test-text">"As a mentor, I've found immense satisfaction in guiding passionate colleagues. The platform makes it easy to scope projects and find the exact talent we need to innovate."</p>
+                    <p class="test-name">- Marcus Johnson, Principal Architect</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. REWARD WINNERS -->
+    <section id="rewards" class="section-padding">
+        <div class="container">
+            <h2 style="text-align: center;">Hall of Fame</h2>
+            <p class="section-subtitle" style="text-align: center;">Celebrating our top contributors this month</p>
+            
+            <div class="winners-grid">
+                <div class="card winner-card">
+                    <div class="medal-icon">🥇</div>
+                    <h4 class="winner-name">Priya Patel</h4>
+                    <p class="winner-award">Rising Star</p>
+                    <p class="winner-proj">GenAI Chatbot Internal Beta</p>
+                    <span class="winner-month">August 2026</span>
+                </div>
+                
+                <div class="card winner-card">
+                    <div class="medal-icon">🏆</div>
+                    <h4 class="winner-name">Carlos Mendez</h4>
+                    <p class="winner-award">Innovation Champion</p>
+                    <p class="winner-proj">Thermal Management Simulator</p>
+                    <span class="winner-month">August 2026</span>
+                </div>
+                
+                <div class="card winner-card">
+                    <div class="medal-icon">🏅</div>
+                    <h4 class="winner-name">Aisha Khan</h4>
+                    <p class="winner-award">Best Collaborator</p>
+                    <p class="winner-proj">Enterprise Agile Transformation</p>
+                    <span class="winner-month">August 2026</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 9. VIDEOS & DEMOS -->
+    <section class="section-padding" style="background-color: var(--dark-bg); color: var(--white);">
+        <div class="container">
+            <h2 style="color: var(--white);">SPARK in Action</h2>
+            <p class="section-subtitle" style="color: #94A3B8;">Resources to get you started</p>
+            
+            <div class="videos-grid">
+                <div class="video-card">
+                    <div class="video-placeholder">
+                        <div class="play-btn"></div>
+                    </div>
+                    <h4 class="video-title">How to Apply - 2 min walkthrough</h4>
+                </div>
+                
+                <div class="video-card">
+                    <div class="video-placeholder">
+                        <div class="play-btn"></div>
+                    </div>
+                    <h4 class="video-title">Manager Review Guide</h4>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 10. FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="logo">✨ SPARK</div>
+                    <p>Connecting Visteon talent with high-impact projects, expert mentors, and well-deserved recognition.</p>
+                </div>
+                
+                <div>
+                    <h4 class="footer-title">Quick Links</h4>
+                    <div class="footer-links">
+                        <a href="#">Home</a>
+                        <a href="#opportunities">All Opportunities</a>
+                        <a href="#manager-hub">Post a Project</a>
+                        <a href="#rewards">Leaderboard</a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="footer-title">Support</h4>
+                    <div class="footer-links">
+                        <a href="#faq">FAQ</a>
+                        <a href="#">Contact Helpdesk</a>
+                        <a href="#">Platform Guidelines</a>
+                        <a href="#">Terms of Use</a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="footer-title">Subscribe to Updates</h4>
+                    <form class="subscribe-form" id="subscribeForm" onsubmit="event.preventDefault(); alert('You\'ve been subscribed!');">
+                        <input type="email" class="subscribe-input" placeholder="Enter your Visteon email" required>
+                        <button type="submit" class="btn btn-primary">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2026 Visteon Corporation. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const hamburgerBtn = document.getElementById('hamburger-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        hamburgerBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+        });
+
+        // Close mobile menu when clicking a link
+        const mobileLinks = mobileMenu.querySelectorAll('a');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+            });
+        });
+    </script>
+</body>
+</html>

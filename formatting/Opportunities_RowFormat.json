@@ -1,0 +1,10 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/row-formatting.json",
+  "additionalRowClass": "=if([$Status] == 'Open', 'sp-field-severity--good', if([$Status] == 'Hold', 'sp-field-severity--warning', ''))",
+  "rowFormatter": {
+    "elmType": "div",
+    "style": {
+      "background-color": "=if([$Status] == 'Open', '#dff6dd', if([$Status] == 'Hold', '#fff4ce', ''))"
+    }
+  }
+}

@@ -1,0 +1,121 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+      "Get_Subscribers": {
+        "inputs": {
+          "host": {
+            "connectionName": "shared_sharepointonline",
+            "operationId": "GetItems",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+          },
+          "parameters": {
+            "dataset": "https://visteon.sharepoint.com/sites/SPARK",
+            "table": "Subscribers",
+            "$filter": "substringof('@{triggerOutputs()?['body/Technology']}', InterestTech)"
+          }
+        },
+        "runAfter": {},
+        "type": "OpenApiConnection",
+        "description": "Fetch relevant subscribers based on technology"
+      },
+      "Apply_to_each_Subscriber": {
+        "actions": {
+          "SendEmail_NewOpportunity": {
+            "inputs": {
+              "host": {
+                "connectionName": "shared_office365",
+                "operationId": "SendEmailV2",
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365"
+              },
+              "parameters": {
+                "To": "@items('Apply_to_each_Subscriber')?['SubscriberEmail']",
+                "Subject": "[SPARK] New Opportunity: @{triggerOutputs()?['body/Title']} (@{triggerOutputs()?['body/Technology']})",
+                "Body": "<p>A new opportunity has been posted that matches your interests in @{triggerOutputs()?['body/Technology']}.</p><p><a href='https://visteon.sharepoint.com/sites/SPARK/Lists/Opportunities/DispForm.aspx?ID=@{triggerOutputs()?['body/ID']}'>View Opportunity</a></p>"
+              }
+            },
+            "runAfter": {},
+            "type": "OpenApiConnection"
+          }
+        },
+        "foreach": "@outputs('Get_Subscribers')?['body/value']",
+        "runAfter": {
+          "Get_Subscribers": [
+            "Succeeded"
+          ]
+        },
+        "type": "Foreach"
+      },
+      "Update_Featured": {
+        "inputs": {
+          "host": {
+            "connectionName": "shared_sharepointonline",
+            "operationId": "PatchItem",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+          },
+          "parameters": {
+            "dataset": "https://visteon.sharepoint.com/sites/SPARK",
+            "table": "Opportunities",
+            "id": "@triggerOutputs()?['body/ID']",
+            "item/Featured": true
+          }
+        },
+        "runAfter": {
+          "Apply_to_each_Subscriber": [
+            "Succeeded"
+          ]
+        },
+        "type": "OpenApiConnection",
+        "description": "Set Featured=Yes for highlighting"
+      },
+      "Error_Handling_Scope": {
+        "actions": {
+          "Send_Error_Email": {
+            "inputs": {
+              "host": {
+                "connectionName": "shared_office365",
+                "operationId": "SendEmailV2",
+                "apiId": "/providers/Microsoft.PowerApps/apis/shared_office365"
+              },
+              "parameters": {
+                "To": "admin@visteon.com",
+                "Subject": "Flow Failure: New Opportunity Notify",
+                "Body": "An error occurred in the flow processing Opportunity ID: @{triggerOutputs()?['body/ID']}"
+              }
+            },
+            "runAfter": {},
+            "type": "OpenApiConnection"
+          }
+        },
+        "runAfter": {
+          "Update_Featured": [
+            "Failed",
+            "TimedOut"
+          ]
+        },
+        "type": "Scope"
+      }
+    },
+    "triggers": {
+      "When_an_item_is_created_or_modified": {
+        "inputs": {
+          "host": {
+            "connectionName": "shared_sharepointonline",
+            "operationId": "GetOnUpdatedItems",
+            "apiId": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline"
+          },
+          "parameters": {
+            "dataset": "https://visteon.sharepoint.com/sites/SPARK",
+            "table": "Opportunities"
+          }
+        },
+        "conditions": [
+          {
+            "expression": "@equals(triggerOutputs()?['body/Status/Value'], 'Open')"
+          }
+        ],
+        "type": "OpenApiConnection"
+      }
+    }
+  }
+}

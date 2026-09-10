@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opportunity Marketplace - SPARK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #005BAB;
+            --secondary: #1A1A2E;
+            --bg-color: #F5F7FA;
+            --card-bg: #FFFFFF;
+            --text-dark: #333333;
+            --text-light: #666666;
+            --border-color: #E2E8F0;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --info: #3B82F6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-dark); line-height: 1.6; }
+
+        /* Top Nav */
+        header { background-color: var(--secondary); color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
+        .logo-container { display: flex; align-items: center; gap: 10px; }
+        .logo-container h1 { font-size: 1.5rem; font-weight: 700; color: #fff; }
+        .logo-container span { font-size: 0.9rem; color: #aaa; }
+        nav { display: flex; gap: 1.5rem; }
+        nav a { color: #CBD5E1; text-decoration: none; font-weight: 500; transition: color 0.3s; }
+        nav a:hover, nav a.active { color: white; border-bottom: 2px solid var(--primary); }
+        .user-profile { display: flex; align-items: center; gap: 10px; }
+        .avatar { width: 35px; height: 35px; border-radius: 50%; background-color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.9rem; }
+
+        /* Main Content */
+        main { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        
+        /* Breadcrumb */
+        .breadcrumb { font-size: 0.9rem; color: var(--text-light); margin-bottom: 1rem; }
+        .breadcrumb a { color: var(--primary); text-decoration: none; }
+        .breadcrumb a:hover { text-decoration: underline; }
+
+        .page-title { font-size: 2rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--secondary); }
+
+        /* Filter Bar */
+        .filter-bar { background-color: var(--card-bg); padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 2rem; position: sticky; top: 70px; z-index: 900; }
+        .filter-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; gap: 1rem; flex-wrap: wrap; }
+        .search-container { flex: 1; min-width: 250px; position: relative; }
+        .search-container input { width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 1rem; }
+        .search-container::before { content: "🔍"; position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: var(--text-light); }
+        
+        .filter-options { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
+        .filter-group { display: flex; flex-direction: column; gap: 0.25rem; }
+        .filter-group label { font-size: 0.8rem; font-weight: 600; color: var(--text-light); text-transform: uppercase; }
+        .filter-group select { padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; background-color: white; font-size: 0.9rem; min-width: 120px; }
+        
+        .results-info { display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid var(--border-color); font-size: 0.9rem; color: var(--text-light); }
+        .sort-group select { border: none; font-weight: 600; color: var(--secondary); background: transparent; cursor: pointer; }
+
+        /* Grid */
+        .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+
+        /* Cards */
+        .card { background-color: var(--card-bg); border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: transform 0.3s, box-shadow 0.3s; display: flex; flex-direction: column; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px rgba(0,0,0,0.1); }
+        .card-img { height: 120px; width: 100%; position: relative; }
+        .img-gradient-blue { background: linear-gradient(135deg, #005BAB, #00B4D8); }
+        .img-gradient-purple { background: linear-gradient(135deg, #6610f2, #d63384); }
+        .img-gradient-green { background: linear-gradient(135deg, #198754, #20c997); }
+        .img-gradient-orange { background: linear-gradient(135deg, #fd7e14, #ffc107); }
+        
+        .card-status { position: absolute; top: 10px; right: 10px; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .status-open { background-color: var(--success); }
+        .status-review { background-color: var(--warning); }
+        .status-hold { background-color: var(--danger); }
+        .status-completed { background-color: var(--text-light); }
+
+        .card-content { padding: 1.25rem; flex: 1; display: flex; flex-direction: column; }
+        .card-category { font-size: 0.75rem; font-weight: 600; color: var(--primary); text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: 0.5px; }
+        .card-title { font-size: 1.1rem; font-weight: 700; color: var(--secondary); margin-bottom: 0.75rem; line-height: 1.3; }
+        
+        .card-tech { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+        .tech-pill { background-color: var(--bg-color); color: var(--text-light); padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.75rem; font-weight: 500; border: 1px solid var(--border-color); }
+        
+        .card-details { margin-top: auto; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.85rem; color: var(--text-light); padding-bottom: 1rem; border-bottom: 1px solid var(--border-color); }
+        .detail-row { display: flex; align-items: center; gap: 0.5rem; }
+        
+        .card-footer { padding-top: 1rem; display: flex; justify-content: space-between; align-items: center; }
+        .mentor { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 500; }
+        .mentor-avatar { width: 24px; height: 24px; border-radius: 50%; background-color: #E2E8F0; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; color: var(--secondary); }
+        .view-btn { color: var(--primary); font-weight: 600; text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+        .view-btn:hover { color: var(--secondary); }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+            .filter-options { width: 100%; justify-content: flex-start; }
+        }
+        @media (max-width: 768px) {
+            header { flex-direction: column; gap: 1rem; padding: 1rem; }
+            nav { width: 100%; overflow-x: auto; padding-bottom: 0.5rem; }
+            .gallery-grid { grid-template-columns: 1fr; }
+            .filter-top { flex-direction: column; align-items: stretch; }
+            .search-container { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-container">
+            <h1>SPARK</h1>
+            <span>| Visteon Internal Portal</span>
+        </div>
+        <nav>
+            <a href="Home.html">Home</a>
+            <a href="Explore.aspx.html" class="active">Explore</a>
+            <a href="Manager-Hub.html">Manager Hub</a>
+            <a href="Rewards.html">Rewards</a>
+        </nav>
+        <div class="user-profile">
+            <div class="avatar">JD</div>
+            <span style="font-size: 0.9rem;">John Doe</span>
+        </div>
+    </header>
+
+    <main>
+        <div class="breadcrumb">
+            <a href="Home.html">Home</a> &gt; <span>Opportunities</span>
+        </div>
+        <h2 class="page-title">Opportunity Marketplace</h2>
+
+        <div class="filter-bar">
+            <div class="filter-top">
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Search opportunities by title or keyword...">
+                </div>
+            </div>
+            
+            <div class="filter-options">
+                <div class="filter-group">
+                    <label>Technology</label>
+                    <select id="techFilter">
+                        <option value="All">All Technologies</option>
+                        <option value="Python">Python</option>
+                        <option value="AI/ML">AI/ML</option>
+                        <option value="SharePoint">SharePoint</option>
+                        <option value="Power Platform">Power Platform</option>
+                        <option value=".NET">.NET</option>
+                        <option value="Embedded C">Embedded C</option>
+                        <option value="Power BI">Power BI</option>
+                        <option value="UI/UX">UI/UX</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Category</label>
+                    <select id="categoryFilter">
+                        <option value="All">All Categories</option>
+                        <option value="Innovation">Innovation</option>
+                        <option value="Process Improvement">Process Improvement</option>
+                        <option value="Learning Sprint">Learning Sprint</option>
+                        <option value="Client POC">Client POC</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Location</label>
+                    <select id="locationFilter">
+                        <option value="All">All Locations</option>
+                        <option value="Chennai">Chennai</option>
+                        <option value="Bangalore">Bangalore</option>
+                        <option value="Goa">Goa</option>
+                        <option value="Remote">Remote</option>
+                        <option value="Hybrid">Hybrid</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Effort</label>
+                    <select id="effortFilter">
+                        <option value="All">Any Effort</option>
+                        <option value="2 hrs/week">2 hrs/week</option>
+                        <option value="5 hrs/week">5 hrs/week</option>
+                        <option value="Full Sprint">Full Sprint</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Status</label>
+                    <select id="statusFilter">
+                        <option value="Open" selected>Open Only</option>
+                        <option value="All">All Statuses</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="results-info">
+                <span id="resultsCount">Showing 4 of 8 opportunities</span>
+                <div class="sort-group">
+                    Sort by: 
+                    <select id="sortFilter">
+                        <option value="newest">Newest</option>
+                        <option value="popular">Most Applied</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="gallery-grid" id="opportunityGrid">
+            <!-- Cards will be injected here via JS -->
+        </div>
+    </main>
+
+    <script>
+        // Seed Data
+        const opportunities = [
+            { id: 1, title: "EV Dashboard POC with Power BI", status: "Open", tech: ["Power BI"], location: "Chennai", duration: "6 weeks", openings: 3, category: "Innovation", effort: "5 hrs/week", mentor: "Sarah J", imgClass: "img-gradient-blue" },
+            { id: 2, title: "AI Defect Classifier for ADAS", status: "Open", tech: ["AI/ML", "Python"], location: "Bangalore", duration: "8 weeks", openings: 2, category: "Innovation", effort: "Full Sprint", mentor: "David K", imgClass: "img-gradient-purple" },
+            { id: 3, title: "SharePoint Migration Helper Tool", status: "Open", tech: ["SharePoint", "Power Platform"], location: "Remote", duration: "4 weeks", openings: 4, category: "Process Improvement", effort: "2 hrs/week", mentor: "Alex M", imgClass: "img-gradient-green" },
+            { id: 4, title: "Embedded HMI Test Automation", status: "Open", tech: ["Embedded C"], location: "Goa", duration: "6 weeks", openings: 2, category: "Learning Sprint", effort: "5 hrs/week", mentor: "Priya T", imgClass: "img-gradient-orange" },
+            { id: 5, title: "Power Platform COE Governance", status: "Under Review", tech: ["Power Platform"], location: "Hybrid", duration: "3 weeks", openings: 1, category: "Process Improvement", effort: "2 hrs/week", mentor: "John D", imgClass: "img-gradient-blue" },
+            { id: 6, title: "UI/UX Redesign for Dealer Portal", status: "Hold", tech: ["UI/UX"], location: "Chennai", duration: "5 weeks", openings: 1, category: "Client POC", effort: "Full Sprint", mentor: "Emma W", imgClass: "img-gradient-purple" },
+            { id: 7, title: "Predictive Maintenance ML Model", status: "Completed", tech: ["AI/ML", "Python", "Power BI"], location: "Bangalore", duration: "10 weeks", openings: 0, category: "Innovation", effort: "Full Sprint", mentor: "David K", imgClass: "img-gradient-green" },
+            { id: 8, title: "CAN Bus Data Logger Optimization", status: "Completed", tech: ["Embedded C", ".NET"], location: "Goa", duration: "8 weeks", openings: 0, category: "Process Improvement", effort: "5 hrs/week", mentor: "Priya T", imgClass: "img-gradient-orange" }
+        ];
+
+        function getStatusClass(status) {
+            switch(status) {
+                case "Open": return "status-open";
+                case "Under Review": return "status-review";
+                case "Hold": return "status-hold";
+                case "Completed": return "status-completed";
+                default: return "status-completed";
+            }
+        }
+
+        function renderCards(data) {
+            const grid = document.getElementById("opportunityGrid");
+            grid.innerHTML = "";
+            
+            data.forEach(item => {
+                const techPills = item.tech.map(t => `<span class="tech-pill">${t}</span>`).join('');
+                const initials = item.mentor.split(' ').map(n=>n[0]).join('');
+                
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-img ${item.imgClass}">
+                        <span class="card-status ${getStatusClass(item.status)}">${item.status}</span>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-category">${item.category}</div>
+                        <h3 class="card-title">${item.title}</h3>
+                        <div class="card-tech">${techPills}</div>
+                        
+                        <div class="card-details">
+                            <div class="detail-row">📍 ${item.location}</div>
+                            <div class="detail-row">⏱️ ${item.duration} (${item.effort})</div>
+                            <div class="detail-row">👥 ${item.openings} Opening(s)</div>
+                        </div>
+                        
+                        <div class="card-footer">
+                            <div class="mentor">
+                                <div class="mentor-avatar">${initials}</div>
+                                ${item.mentor}
+                            </div>
+                            <a href="#" class="view-btn" onclick="alert('Navigate to Details Page')">View Details &rarr;</a>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            
+            document.getElementById("resultsCount").textContent = `Showing ${data.length} of ${opportunities.length} opportunities`;
+        }
+
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const tech = document.getElementById('techFilter').value;
+            const category = document.getElementById('categoryFilter').value;
+            const location = document.getElementById('locationFilter').value;
+            const effort = document.getElementById('effortFilter').value;
+            const status = document.getElementById('statusFilter').value;
+
+            const filtered = opportunities.filter(item => {
+                const matchSearch = item.title.toLowerCase().includes(searchTerm);
+                const matchTech = tech === "All" || item.tech.includes(tech);
+                const matchCategory = category === "All" || item.category === category;
+                const matchLocation = location === "All" || item.location === location;
+                const matchEffort = effort === "All" || item.effort === effort;
+                const matchStatus = status === "All" || item.status === status;
+                
+                return matchSearch && matchTech && matchCategory && matchLocation && matchEffort && matchStatus;
+            });
+
+            renderCards(filtered);
+        }
+
+        // Event Listeners
+        document.getElementById('searchInput').addEventListener('input', applyFilters);
+        document.querySelectorAll('select').forEach(select => {
+            select.addEventListener('change', applyFilters);
+        });
+
+        // Initial Render
+        applyFilters();
+    </script>
+</body>
+</html>

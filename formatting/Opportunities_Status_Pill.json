@@ -1,0 +1,14 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.json",
+  "elmType": "div",
+  "txtContent": "@currentField",
+  "style": {
+    "border-radius": "12px",
+    "padding": "4px 12px",
+    "font-weight": "600",
+    "font-size": "12px",
+    "display": "inline-block",
+    "background-color": "=if(@currentField == 'Open', '#0F7B0F', if(@currentField == 'Hold', '#C19C00', if(@currentField == 'Closed', '#616161', if(@currentField == 'Completed', '#0078D4', if(@currentField == 'Under Review', '#7B52C9', if(@currentField == 'Draft', '#BDBDBD', ''))))))",
+    "color": "=if(@currentField == 'Draft', '#000000', '#ffffff')"
+  }
+}

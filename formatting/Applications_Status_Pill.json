@@ -1,0 +1,14 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/sp/v2/column-formatting.json",
+  "elmType": "div",
+  "txtContent": "@currentField",
+  "style": {
+    "border-radius": "12px",
+    "padding": "4px 12px",
+    "font-weight": "600",
+    "font-size": "12px",
+    "display": "inline-block",
+    "background-color": "=if(@currentField == 'Submitted', '#0078D4', if(@currentField == 'Under Review', '#7B52C9', if(@currentField == 'Discussion Scheduled', '#038387', if(@currentField == 'Shortlisted', '#0F7B0F', if(@currentField == 'Rejected', '#A4262C', if(@currentField == 'Onboarded', '#107C10', if(@currentField == 'Withdrawn', '#616161', '')))))))",
+    "color": "#ffffff"
+  }
+}
